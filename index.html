@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HC | Portfolio Notebook</title>
+  <meta name="description" content="K. Hruthik Charan — ML/AI Enthusiast, Data Scientist. Jupyter-style portfolio notebook." />
+  <meta name="keywords" content="Hruthik Charan, ML, AI, Data Science, Portfolio, NLP, RAG" />
+  <meta property="og:title" content="HC | Portfolio Notebook" />
+  <meta property="og:description" content="ML/AI Enthusiast & Data Scientist from Vijayawada" />
+
+  <!-- Favicon: HC initials -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='12' fill='%230d1117'/><text y='68' x='50' text-anchor='middle' font-family='monospace' font-size='44' font-weight='bold' fill='%2300e5ff'>HC</text></svg>" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Fira+Code:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ===== CSS VARIABLES ===== */
+    :root {
+      --bg: #0d1117;
+      --toolbar-bg: #161b22;
+      --cell-bg: #161b22;
+      --cell-hover: #1c2130;
+      --cell-selected-bg: #1c2533;
+      --border: #30363d;
+      --border-active: #00e5ff;
+      --accent: #00e5ff;
+      --accent2: #00bcd4;
+      --accent3: #4ade80;
+      --text: #c9d1d9;
+      --text-dim: #8b949e;
+      --text-bright: #f0f6fc;
+      --keyword: #ff79c6;
+      --string: #a5d6ff;
+      --number: #f2cc60;
+      --comment: #6e7681;
+      --function: #d2a8ff;
+      --operator: #79c0ff;
+      --tag: #7ee787;
+      --error: #ff7b72;
+      --warning: #ffa657;
+      --toolbar-h: 64px;
+      --cell-radius: 6px;
+      --transition: 0.25s ease;
+      --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+    }
+
+    /* ===== RESET & BASE ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    ::selection { background: rgba(0, 229, 255, 0.2); color: var(--text-bright); }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--toolbar-bg); }
+    ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent2); }
+
+    /* ===== LOADING SCREEN ===== */
+    #loader {
+      position: fixed; inset: 0; z-index: 9999;
+      background: var(--bg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 20px; transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+    #loader.hide { opacity: 0; visibility: hidden; }
+    .loader-logo {
+      font-size: 48px; font-weight: 700; color: var(--accent);
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    .loader-text { color: var(--text-dim); font-size: 13px; letter-spacing: 2px; }
+    .loader-bar {
+      width: 200px; height: 3px; background: var(--border);
+      border-radius: 3px; overflow: hidden;
+    }
+    .loader-bar-fill {
+      height: 100%; background: linear-gradient(90deg, var(--accent), var(--function));
+      border-radius: 3px; width: 0%;
+      animation: loadbar 1.5s ease forwards;
+    }
+    @keyframes loadbar { to { width: 100%; } }
+    @keyframes pulse { 0%,100% { opacity:1; } 50% { opacity:0.4; } }
+
+    /* ===== JUPYTER TOOLBAR ===== */
+    #toolbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      height: var(--toolbar-h);
+      background: var(--toolbar-bg);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 16px;
+      gap: 0;
+    }
+    .tb-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 700; color: var(--accent);
+      border-right: 1px solid var(--border);
+      padding-right: 16px; margin-right: 16px;
+      white-space: nowrap;
+    }
+    .tb-logo .tb-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--function));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 800; color: #0d1117;
+    }
+    .tb-logo .file-name {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .tb-logo .file-name span:first-child { font-size: 12px; color: var(--text-bright); }
+    .tb-logo .file-name span:last-child { font-size: 10px; color: var(--text-dim); font-weight: 400; }
+
+    /* Nav links */
+    .tb-nav {
+      display: flex; align-items: center; gap: 0;
+      list-style: none; flex: 1;
+    }
+    .tb-nav li a {
+      display: block; padding: 4px 12px; font-size: 12px;
+      color: var(--text-dim); border-radius: 4px;
+      transition: color var(--transition), background var(--transition);
+    }
+    .tb-nav li a:hover, .tb-nav li a.active {
+      color: var(--accent); background: rgba(0,229,255,0.08);
+      text-decoration: none;
+    }
+
+    /* Kernel status */
+    .tb-right {
+      display: flex; align-items: center; gap: 12px;
+      margin-left: auto;
+    }
+    .kernel-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.2);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 11px; color: var(--accent2);
+    }
+    .kernel-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent3);
+      box-shadow: 0 0 6px var(--accent3);
+      animation: blink 2.5s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* Run button */
+    .btn-run {
+      background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.3);
+      color: var(--accent); padding: 5px 14px; border-radius: 4px;
+      cursor: pointer; font-family: var(--font-mono); font-size: 11px;
+      transition: all var(--transition);
+    }
+    .btn-run:hover { background: rgba(0,229,255,0.2); border-color: var(--accent); }
+
+    /* Hamburger */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 6px;
+    }
+    .hamburger span {
+      width: 20px; height: 2px; background: var(--text-dim);
+      border-radius: 2px; transition: all 0.3s;
+    }
+
+    /* ===== MAIN NOTEBOOK AREA ===== */
+    main {
+      margin-top: var(--toolbar-h);
+      max-width: 960px;
+      margin-left: auto; margin-right: auto;
+      padding: 40px 20px 100px;
+    }
+
+    /* Notebook header strip */
+    .notebook-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .nb-path { color: var(--text-dim); font-size: 11px; }
+    .nb-path span { color: var(--accent2); }
+    .nb-status { font-size: 11px; color: var(--comment); }
+
+    /* ===== CELL ===== */
+    .cell {
+      display: flex; gap: 12px;
+      margin-bottom: 4px;
+      border-radius: var(--cell-radius);
+      border: 1px solid transparent;
+      padding: 8px 6px;
+      transition: border-color var(--transition), background var(--transition);
+      position: relative;
+    }
+    .cell:hover { background: rgba(255,255,255,0.01); border-color: var(--border); }
+    .cell.active { border-color: var(--border-active) !important; background: var(--cell-selected-bg) !important; }
+    .cell.visible { animation: cellFadeIn 0.4s ease forwards; }
+    @keyframes cellFadeIn {
+      from { opacity:0; transform: translateY(10px); }
+      to { opacity:1; transform: translateY(0); }
+    }
+
+    /* Cell prompt (In [n]:) */
+    .cell-prompt {
+      min-width: 90px; text-align: right;
+      padding-top: 10px; flex-shrink: 0;
+    }
+    .prompt-label {
+      font-size: 11px; color: var(--comment);
+      white-space: nowrap;
+    }
+    .prompt-label.in-label { color: var(--accent2); }
+    .prompt-label.out-label { color: var(--function); }
+    .prompt-count { color: var(--text-dim); }
+
+    /* Cell body */
+    .cell-body { flex: 1; min-width: 0; }
+
+    /* Input area (code cell) */
+    .cell-input {
+      background: var(--cell-bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid transparent;
+      border-radius: var(--cell-radius);
+      padding: 14px 16px;
+      transition: border-color var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .cell:hover .cell-input { border-left-color: var(--border); }
+    .cell.active .cell-input { border-left-color: var(--accent) !important; }
+
+    /* Cell type badge */
+    .cell-type {
+      position: absolute; top: 8px; right: 12px;
+      font-size: 10px; color: var(--comment);
+      background: rgba(255,255,255,0.04);
+      padding: 2px 8px; border-radius: 10px;
+    }
+
+    /* Output area */
+    .cell-output {
+      margin-top: 4px;
+      background: rgba(13, 17, 23, 0.6);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--function);
+      border-radius: var(--cell-radius);
+      padding: 14px 16px;
+      display: none;
+    }
+    .cell-output.show { display: block; }
+
+    /* Markdown cell (rendered) */
+    .md-cell .cell-input {
+      border-left-color: var(--comment);
+      background: rgba(22, 27, 34, 0.7);
+    }
+    .md-cell.active .cell-input { border-left-color: var(--accent); }
+
+    /* ===== SYNTAX HIGHLIGHTING ===== */
+    .code { white-space: pre-wrap; word-break: break-word; }
+    .kw { color: var(--keyword); }      /* keyword */
+    .fn { color: var(--function); }     /* function */
+    .st { color: var(--string); }       /* string */
+    .nm { color: var(--number); }       /* number */
+    .cm { color: var(--comment); }      /* comment */
+    .op { color: var(--operator); }     /* operator */
+    .tg { color: var(--tag); }          /* tag/class */
+    .at { color: var(--accent2); }      /* attribute */
+    .tx { color: var(--text); }         /* plain text */
+    .ac { color: var(--accent); }       /* accent */
+
+    /* ===== HERO MARKDOWN CONTENT ===== */
+    .hero-content { padding: 10px 0; }
+    .hero-name {
+      font-size: clamp(36px, 6vw, 56px); font-weight: 700;
+      color: var(--text-bright); line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .hero-name .cursor {
+      display: inline-block; width: 3px; height: 0.9em;
+      background: var(--accent); margin-left: 4px;
+      vertical-align: middle;
+      animation: blink-cursor 1s step-end infinite;
+    }
+    @keyframes blink-cursor { 0%,100%{opacity:1} 50%{opacity:0} }
+    .hero-title {
+      font-size: 16px; color: var(--accent);
+      margin-bottom: 20px; font-weight: 400;
+    }
+    .hero-bio {
+      font-size: 13px; color: var(--text-dim);
+      max-width: 600px; line-height: 1.8;
+      margin-bottom: 28px;
+    }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      padding: 10px 22px; border-radius: 6px; font-family: var(--font-mono);
+      font-size: 13px; cursor: pointer; transition: all var(--transition);
+      border: none; display: inline-flex; align-items: center; gap: 8px;
+      font-weight: 500;
+    }
+    .btn-primary {
+      background: var(--accent); color: #0d1117;
+    }
+    .btn-primary:hover { background: #33eeff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,229,255,0.3); text-decoration: none; color: #0d1117; }
+    .btn-secondary {
+      background: transparent; border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); text-decoration: none; }
+
+    /* Particles canvas */
+    #particles-canvas {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none; z-index: 0; opacity: 0.4;
+    }
+
+    /* ===== ABOUT SECTION ===== */
+    .about-output {
+      color: var(--text); font-size: 13px; line-height: 1.9;
+    }
+    .about-output p { margin-bottom: 12px; }
+    .about-output .highlight { color: var(--accent); }
+    .about-output .highlight2 { color: var(--function); }
+    .about-fun-facts {
+      margin-top: 16px;
+      display: flex; flex-wrap: wrap; gap: 10px;
+    }
+    .fun-tag {
+      background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.2);
+      color: var(--accent2); padding: 6px 14px; border-radius: 20px;
+      font-size: 12px;
+    }
+
+    /* ===== SKILLS SECTION ===== */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .skill-group {
+      background: var(--cell-bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px;
+      transition: border-color var(--transition), transform var(--transition);
+    }
+    .skill-group:hover { border-color: var(--accent2); transform: translateY(-3px); }
+    .skill-group-title {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px;
+      color: var(--comment); margin-bottom: 14px;
+    }
+    .skill-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+    .skill-tag {
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      color: var(--text); padding: 4px 10px; border-radius: 4px;
+      font-size: 12px; transition: all var(--transition);
+    }
+    .skill-tag:hover { background: rgba(0,229,255,0.1); border-color: var(--accent2); color: var(--accent); }
+
+    /* ===== PROJECTS SECTION ===== */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    .project-card {
+      background: var(--cell-bg); border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+      transition: all var(--transition);
+      display: flex; flex-direction: column;
+    }
+    .project-card:hover {
+      border-color: var(--accent2);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,229,255,0.1);
+    }
+    .project-thumb {
+      height: 120px;
+      background: linear-gradient(135deg, rgba(0,229,255,0.05), rgba(210,168,255,0.05));
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .project-thumb::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 50%, rgba(0,229,255,0.08) 0%, transparent 70%);
+    }
+    .project-thumb-icon {
+      font-size: 40px; opacity: 0.6;
+    }
+    .project-content { padding: 18px; flex: 1; display: flex; flex-direction: column; }
+    .project-name {
+      font-size: 14px; font-weight: 600; color: var(--text-bright);
+      margin-bottom: 8px;
+    }
+    .project-desc {
+      font-size: 12px; color: var(--text-dim); line-height: 1.7;
+      flex: 1; margin-bottom: 14px;
+    }
+    .project-tech { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .tech-tag {
+      background: rgba(210,168,255,0.08); border: 1px solid rgba(210,168,255,0.2);
+      color: var(--function); font-size: 11px; padding: 3px 8px; border-radius: 4px;
+    }
+    .project-links { display: flex; gap: 10px; }
+    .project-link {
+      font-size: 11px; color: var(--accent2);
+      background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.15);
+      padding: 5px 12px; border-radius: 4px;
+      transition: all var(--transition);
+    }
+    .project-link:hover { background: rgba(0,229,255,0.15); color: var(--accent); text-decoration: none; }
+    .wip-card {
+      background: var(--cell-bg); border: 1px dashed var(--border);
+      border-radius: 10px; padding: 30px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; color: var(--comment); font-size: 13px;
+      min-height: 200px;
+    }
+
+    /* ===== EDUCATION SECTION ===== */
+    .edu-card {
+      background: var(--cell-bg); border: 1px solid var(--border);
+      border-radius: 10px; padding: 24px;
+      display: flex; gap: 20px; align-items: flex-start;
+    }
+    .edu-icon {
+      width: 50px; height: 50px; border-radius: 10px;
+      background: linear-gradient(135deg, rgba(0,229,255,0.2), rgba(210,168,255,0.1));
+      border: 1px solid rgba(0,229,255,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; flex-shrink: 0;
+    }
+    .edu-info { flex: 1; }
+    .edu-degree { font-size: 15px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
+    .edu-institution { font-size: 13px; color: var(--accent); margin-bottom: 6px; }
+    .edu-year { font-size: 12px; color: var(--text-dim); }
+
+    /* ===== ML GAME SECTION ===== */
+    .game-wrapper {
+      background: #0a0e1a;
+      border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden;
+    }
+    .game-header {
+      background: var(--toolbar-bg); border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .game-title { font-size: 12px; color: var(--accent); font-weight: 600; }
+    .game-subtitle { font-size: 11px; color: var(--text-dim); }
+    .game-body { display: flex; gap: 0; }
+    .game-sidebar {
+      width: 220px; flex-shrink: 0;
+      border-right: 1px solid var(--border);
+      padding: 16px;
+      background: rgba(0,0,0,0.2);
+    }
+    .game-sidebar h4 { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--comment); margin-bottom: 12px; }
+    .game-btn {
+      width: 100%; padding: 8px 12px; margin-bottom: 8px;
+      border-radius: 6px; border: 1px solid var(--border);
+      background: var(--cell-bg); color: var(--text);
+      font-family: var(--font-mono); font-size: 12px;
+      cursor: pointer; transition: all var(--transition);
+      text-align: left;
+    }
+    .game-btn:hover { border-color: var(--accent2); color: var(--accent); background: rgba(0,229,255,0.05); }
+    .game-btn.active-btn { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.1); }
+    .game-main {
+      flex: 1; position: relative;
+      display: flex; flex-direction: column;
+    }
+    #nn-canvas {
+      width: 100%; height: 380px; display: block;
+      cursor: crosshair;
+    }
+    .game-tooltip {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(13,17,23,0.95); border-top: 1px solid var(--border);
+      padding: 10px 16px; font-size: 12px; color: var(--text-dim);
+      min-height: 50px;
+    }
+    .game-tooltip strong { color: var(--accent); }
+    .epoch-bar-wrap {
+      margin-top: 10px;
+    }
+    .epoch-label { font-size: 11px; color: var(--text-dim); margin-bottom: 4px; }
+    .epoch-track {
+      height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;
+    }
+    .epoch-fill {
+      height: 100%; background: linear-gradient(90deg, var(--accent), var(--function));
+      border-radius: 3px; width: 0%; transition: width 0.3s;
+    }
+    .loss-display {
+      font-size: 12px; color: var(--accent3); margin-top: 6px;
+    }
+    .game-legend {
+      display: flex; gap: 12px; flex-wrap: wrap; margin-top: 8px;
+    }
+    .legend-item {
+      display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim);
+    }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    /* ===== CONTACT SECTION ===== */
+    .contact-wrapper {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    }
+    .contact-info { }
+    .contact-cta {
+      font-size: 24px; font-weight: 700; color: var(--text-bright);
+      margin-bottom: 14px; line-height: 1.3;
+    }
+    .contact-cta span { color: var(--accent); }
+    .contact-links { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+    .contact-link {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 16px; border-radius: 8px;
+      background: var(--cell-bg); border: 1px solid var(--border);
+      color: var(--text); transition: all var(--transition);
+    }
+    .contact-link:hover { border-color: var(--accent2); color: var(--accent); text-decoration: none; transform: translateX(4px); }
+    .contact-link-icon { font-size: 18px; }
+    .contact-link-label { font-size: 12px; color: var(--text-dim); }
+    .contact-link-val { font-size: 13px; }
+    .contact-form { display: flex; flex-direction: column; gap: 12px; }
+    .form-field { display: flex; flex-direction: column; gap: 6px; }
+    .form-field label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+    .form-field input, .form-field textarea {
+      background: var(--cell-bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 10px 14px;
+      font-family: var(--font-mono); font-size: 13px; color: var(--text);
+      outline: none; resize: none;
+      transition: border-color var(--transition);
+    }
+    .form-field input:focus, .form-field textarea:focus { border-color: var(--accent); }
+    .form-field textarea { height: 100px; }
+    .btn-send {
+      padding: 10px 24px; border-radius: 6px;
+      background: var(--accent); border: none; color: #0d1117;
+      font-family: var(--font-mono); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all var(--transition);
+    }
+    .btn-send:hover { background: #33eeff; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,229,255,0.3); }
+
+    /* ===== SECTION TITLES (as markdown headings) ===== */
+    .md-h1 { font-size: 22px; font-weight: 700; color: var(--text-bright); margin-bottom: 6px; }
+    .md-h2 { font-size: 18px; font-weight: 600; color: var(--text-bright); margin-bottom: 4px; }
+    .md-h3 { font-size: 15px; font-weight: 600; color: var(--accent2); margin-bottom: 2px; }
+    .md-hr { border: none; border-top: 1px solid var(--border); margin: 8px 0; }
+    .md-badge {
+      display: inline-block; background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.25);
+      color: var(--accent); padding: 3px 10px; border-radius: 12px; font-size: 11px; margin-bottom: 10px;
+    }
+    .md-p { font-size: 13px; color: var(--text-dim); line-height: 1.8; }
+
+    /* ===== SCROLL TO TOP ===== */
+    #scroll-top {
+      position: fixed; bottom: 30px; right: 30px; z-index: 500;
+      width: 40px; height: 40px; border-radius: 8px;
+      background: var(--cell-bg); border: 1px solid var(--border);
+      color: var(--text-dim); font-size: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; opacity: 0; visibility: hidden;
+      transition: all var(--transition);
+    }
+    #scroll-top.show { opacity: 1; visibility: visible; }
+    #scroll-top:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-3px); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center; padding: 30px 20px;
+      border-top: 1px solid var(--border);
+      color: var(--comment); font-size: 12px;
+      max-width: 960px; margin: 0 auto;
+    }
+    footer span { color: var(--accent); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .tb-nav { display: none; }
+      .tb-nav.open {
+        display: flex; flex-direction: column;
+        position: fixed; top: var(--toolbar-h); left: 0; right: 0;
+        background: var(--toolbar-bg); border-bottom: 1px solid var(--border);
+        padding: 12px;
+      }
+      .hamburger { display: flex; }
+      .cell-prompt { min-width: 60px; }
+      .contact-wrapper { grid-template-columns: 1fr; }
+      .game-body { flex-direction: column; }
+      .game-sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); }
+      main { padding: 20px 10px 80px; }
+      .hero-name { font-size: 32px; }
+    }
+
+    /* z-index for main content above particles */
+    main, #toolbar { position: relative; z-index: 1; }
+  </style>
+</head>
+<body>
+
+<!-- Loading Screen -->
+<div id="loader">
+  <div class="loader-logo">HC</div>
+  <div class="loader-text">INITIALIZING KERNEL...</div>
+  <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+</div>
+
+<!-- Particles -->
+<canvas id="particles-canvas"></canvas>
+
+<!-- ===== TOOLBAR ===== -->
+<header id="toolbar">
+  <div class="tb-logo">
+    <div class="tb-icon">HC</div>
+    <div class="file-name">
+      <span>portfolio.ipynb</span>
+      <span>Last checkpoint: just now</span>
+    </div>
+  </div>
+
+  <nav>
+    <ul class="tb-nav" id="nav-links">
+      <li><a href="#hero">~/home</a></li>
+      <li><a href="#about">about()</a></li>
+      <li><a href="#skills">skills[]</a></li>
+      <li><a href="#projects">projects{}</a></li>
+      <li><a href="#education">education</a></li>
+      <li><a href="#game">nn_game()</a></li>
+      <li><a href="#contact">contact()</a></li>
+    </ul>
+  </nav>
+
+  <div class="tb-right">
+    <div class="kernel-badge">
+      <div class="kernel-dot"></div>
+      Python 3 (Portfolio) ●
+    </div>
+    <button class="btn-run" onclick="document.querySelector('#hero').scrollIntoView({behavior:'smooth'})">▶ Run All</button>
+    <div class="hamburger" id="hamburger" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== MAIN NOTEBOOK ===== -->
+<main>
+  <div class="notebook-header">
+    <div class="nb-path">~/notebooks/<span>portfolio.ipynb</span></div>
+    <div class="nb-status" id="kernel-status">Kernel ready | Python 3.11</div>
+  </div>
+
+  <!-- =============================== -->
+  <!--  CELL 1: Hero                   -->
+  <!-- =============================== -->
+  <section id="hero">
+    <div class="cell md-cell active" data-cell="1">
+      <div class="cell-prompt">
+        <div class="prompt-label in-label">In [<span class="prompt-count">1</span>]:</div>
+      </div>
+      <div class="cell-body">
+        <div class="cell-input">
+          <span class="cell-type">markdown</span>
+          <div class="code"><span class="cm"># markdown cell — rendered below</span>
+<span class="cm">"""</span>
+<span class="kw">## </span><span class="st">Hero Section</span>
+<span class="cm">"""</span></div>
+        </div>
+        <div class="cell-output show">
+          <div class="hero-content">
+            <div class="hero-name">
+              Hi, I'm Hruthik Charan<span class="cursor"></span>
+            </div>
+            <div class="hero-title">&gt;_ ML/AI Enthusiast &amp; Data Scientist</div>
+            <div class="hero-bio">
+              Computer Science &amp; Business Systems student specializing in AI/ML, NLP, and RAG architectures. Passionate about building efficient systems and writing clean, maintainable code.
+            </div>
+            <div class="hero-btns">
+              <a href="#projects" class="btn btn-primary">
+                <span>⚡</span> View My Work
+              </a>
+              <a href="https://k-hruthik-charan-resume.tiiny.site" target="_blank" class="btn btn-secondary">
+                <span>📄</span> Download Resume
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== -->
+  <!--  CELL 2: About                  -->
+  <!-- =============================== -->
+  <section id="about">
+    <div class="cell" data-cell="2">
+      <div class="cell-prompt">
+        <div class="prompt-label in-label">In [<span class="prompt-count">2</span>]:</div>
+      </div>
+      <div class="cell-body">
+        <div class="cell-input">
+          <span class="cell-type">code</span>
+          <div class="code"><span class="kw">def </span><span class="fn">about_me</span><span class="tx">() -> </span><span class="tg">str</span><span class="tx">:</span>
+    <span class="st">"""Returns a human-readable biography."""</span>
+    <span class="kw">return </span><span class="tg">HruthikCharan</span><span class="tx">(</span>
+        <span class="at">location</span><span class="op">=</span><span class="st">"Vijayawada, India"</span><span class="tx">,</span>
+        <span class="at">passion</span><span class="op">=</span><span class="st">"AI/ML + NLP + actually building things"</span><span class="tx">,</span>
+        <span class="at">mode</span><span class="op">=</span><span class="st">"chaotic efficiency"</span>
+    <span class="tx">)</span>
+
+<span class="fn">about_me</span><span class="tx">()</span></div>
+        </div>
+        <div class="cell-output show">
+          <div class="prompt-label out-label" style="margin-bottom:12px">Out [<span>2</span>]:</div>
+          <div class="about-output">
+            <p>I mostly write <span class="highlight">clean, maintainable code</span> so I have more free time to watch Real Madrid collect trophies, consume literally any sport broadcasted, or actually go outside and play them.</p>
+            <p>I'm an <span class="highlight2">AI/ML enthusiast</span> and Computer Science student from Vijayawada who firmly believes that reading endless documentation is a trap — if we aren't learning by actually building a project, count me out.</p>
+            <p>My brain is essentially a <span class="highlight">24/7 whiteboard</span>; I'm constantly hunting for wild new ideas to build into reality. Ultimately, I build cool things like automated pipelines that translate dense legal jargon into plain English, and I can absolutely bring that same chaotic efficiency to your team.</p>
+            <div class="about-fun-facts">
+              <div class="fun-tag">⚽ Real Madrid fanatic</div>
+              <div class="fun-tag">🏏 Sports omnivore</div>
+              <div class="fun-tag">🧠 AI/ML builder</div>
+              <div class="fun-tag">🔥 Project-first learner</div>
+              <div class="fun-tag">🤝 Hackathon enjoyer</div>
+              <div class="fun-tag">☕ Powered by caffeine</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== -->
+  <!--  CELL 3: Skills                 -->
+  <!-- =============================== -->
+  <section id="skills">
+    <div class="cell" data-cell="3">
+      <div class="cell-prompt">
+        <div class="prompt-label in-label">In [<span class="prompt-count">3</span>]:</div>
+      </div>
+      <div class="cell-body">
+        <div class="cell-input">
+          <span class="cell-type">code</span>
+          <div class="code"><span class="kw">import </span><span class="fn">skills</span>
+<span class="fn">skills</span><span class="tx">.</span><span class="fn">display</span><span class="tx">(</span><span class="at">format</span><span class="op">=</span><span class="st">"grouped"</span><span class="tx">,</span> <span class="at">animate</span><span class="op">=</span><span class="kw">True</span><span class="tx">)</span></div>
+        </div>
+        <div class="cell-output show">
+          <div class="skills-grid">
+            <div class="skill-group">
+              <div class="skill-group-title">// Languages</div>
+              <div class="skill-tags">
+                <span class="skill-tag">C</span>
+                <span class="skill-tag">C++</span>
+                <span class="skill-tag">Python</span>
+                <span class="skill-tag">Java</span>
+                <span class="skill-tag">SQL</span>
+                <span class="skill-tag">R</span>
+              </div>
+            </div>
+            <div class="skill-group">
+              <div class="skill-group-title">// Frameworks &amp; Libraries</div>
+              <div class="skill-tags">
+                <span class="skill-tag">Pandas</span>
+                <span class="skill-tag">Keras</span>
+                <span class="skill-tag">TensorFlow</span>
+                <span class="skill-tag">LangChain</span>
+                <span class="skill-tag">LangGraph</span>
+                <span class="skill-tag">NLTK</span>
+                <span class="skill-tag">FastAPI</span>
+              </div>
+            </div>
+            <div class="skill-group">
+              <div class="skill-group-title">// Tools &amp; Platforms</div>
+              <div class="skill-tags">
+                <span class="skill-tag">Git</span>
+                <span class="skill-tag">Docker</span>
+                <span class="skill-tag">PostgreSQL</span>
+                <span class="skill-tag">pgvector</span>
+                <span class="skill-tag">Power BI</span>
+                <span class="skill-tag">Tableau</span>
+              </div>
+            </div>
+            <div class="skill-group">
+              <div class="skill-group-title">// Domains &amp; Concepts</div>
+              <div class="skill-tags">
+                <span class="skill-tag">Machine Learning</span>
+                <span class="skill-tag">NLP</span>
+                <span class="skill-tag">Generative AI concepts</span>
+                <span class="skill-tag">RAG</span>
+                <span class="skill-tag">OOPS</span>
+                <span class="skill-tag">Sentiment Analysis</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== -->
+  <!--  CELL 4: Projects               -->
+  <!-- =============================== -->
+  <section id="projects">
+    <div class="cell" data-cell="4">
+      <div class="cell-prompt">
+        <div class="prompt-label in-label">In [<span class="prompt-count">4</span>]:</div>
+      </div>
+      <div class="cell-body">
+        <div class="cell-input">
+          <span class="cell-type">code</span>
+          <div class="code"><span class="fn">projects</span><span class="tx"> = [</span>
+    <span class="st">"Stock Movement Sentiment Analysis Pipeline"</span><span class="tx">,</span>
+    <span class="st">"Patent-Scout: Hybrid RAG Innovation Accelerator"</span><span class="tx">,</span>
+    <span class="st">"InteriorGen — AI Room Designer"</span><span class="tx">,</span>
+    <span class="st">"... more loading"</span>
+<span class="tx">]</span>
+<span class="fn">render</span><span class="tx">(</span><span class="fn">projects</span><span class="tx">)</span></div>
+        </div>
+        <div class="cell-output show">
+          <div class="projects-grid">
+
+            <!-- Project 1 -->
+            <div class="project-card">
+              <div class="project-thumb">
+                <div class="project-thumb-icon">📈</div>
+              </div>
+              <div class="project-content">
+                <div class="project-name">Stock Movement Sentiment Analysis Pipeline</div>
+                <div class="project-desc">
+                  A data scraping and NLP pipeline that extracts high-volume Twitter financial discussions to analyze market mood and correlate social media sentiment with actual stock price movements over time.
+                </div>
+                <div class="project-tech">
+                  <span class="tech-tag">Python</span>
+                  <span class="tech-tag">Pandas</span>
+                  <span class="tech-tag">NLTK</span>
+                  <span class="tech-tag">Plotly</span>
+                  <span class="tech-tag">VADER</span>
+                </div>
+                <div class="project-links">
+                  <a href="https://github.com/Hruthikck28" target="_blank" class="project-link">⌥ GitHub</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card">
+              <div class="project-thumb">
+                <div class="project-thumb-icon">⚖️</div>
+              </div>
+              <div class="project-content">
+                <div class="project-name">Patent-Scout: Hybrid RAG Innovation Accelerator</div>
+                <div class="project-desc">
+                  Architected a decoupled microservices platform with FastAPI backend and semantic chunking to process multi-page invention disclosures. Integrated Google Gemini 2.5 Flash as a constrained "Legalese Translator" via hybrid pgvector pipeline.
+                </div>
+                <div class="project-tech">
+                  <span class="tech-tag">FastAPI</span>
+                  <span class="tech-tag">LangChain</span>
+                  <span class="tech-tag">pgvector</span>
+                  <span class="tech-tag">Gemini 2.5</span>
+                  <span class="tech-tag">HuggingFace</span>
+                  <span class="tech-tag">Streamlit</span>
+                </div>
+                <div class="project-links">
+                  <a href="https://github.com/Hruthikck28" target="_blank" class="project-link">⌥ GitHub</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="project-card">
+              <div class="project-thumb">
+                <div class="project-thumb-icon">🏠</div>
+              </div>
+              <div class="project-content">
+                <div class="project-name">InteriorGen — AI Room Designer</div>
+                <div class="project-desc">
+                  Engineered a generative deep learning system for virtual staging using Stable Diffusion v1.5 and Multi-ControlNet. Fused SegFormer + MiDaS for structural-preserving text-based interior restyling deployed on AWS EC2.
+                </div>
+                <div class="project-tech">
+                  <span class="tech-tag">Stable Diffusion</span>
+                  <span class="tech-tag">ControlNet</span>
+                  <span class="tech-tag">SegFormer</span>
+                  <span class="tech-tag">PyTorch</span>
+                  <span class="tech-tag">OpenCV</span>
+                  <span class="tech-tag">AWS EC2</span>
+                </div>
+                <div class="project-links">
+                  <a href="https://github.com/Hruthikck28" target="_blank" class="project-link">⌥ GitHub</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- WIP card -->
+            <div class="wip-card">
+              <span style="font-size:22px">🚧</span>
+              <div>
+                <div style="color:var(--text-dim);margin-bottom:4px;">More projects loading...</div>
+                <div style="font-size:11px;color:var(--comment)">Under construction · check back soon</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== -->
+  <!--  CELL 5: Education              -->
+  <!-- =============================== -->
+  <section id="education">
+    <div class="cell md-cell" data-cell="5">
+      <div class="cell-prompt">
+        <div class="prompt-label in-label">In [<span class="prompt-count">5</span>]:</div>
+      </div>
+      <div class="cell-body">
+        <div class="cell-input">
+          <span class="cell-type">markdown</span>
+          <div class="code"><span class="cm"># Education</span></div>
+        </div>
+        <div class="cell-output show">
+          <div class="edu-card">
+            <div class="edu-icon">🎓</div>
+            <div class="edu-info">
+              <div class="edu-degree">B.Tech in Computer Science &amp; Business Systems</div>
+              <div class="edu-institution">VIT AP University</div>
+              <div class="edu-year">Graduating 2026 · Vijayawada, India</div>
+              <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+                <span class="fun-tag">AI/ML</span>
+                <span class="fun-tag">Data Science</span>
+                <span class="fun-tag">Software Engineering</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== -->
+  <!--  CELL 6: ML Neurons Game        -->
+  <!-- =============================== -->
+  <section id="game">
+    <div class="cell" data-cell="6">
+      <div class="cell-prompt">
+        <div class="prompt-label in-label">In [<span class="prompt-count">6</span>]:</div>
+      </div>
+      <div class="cell-body">
+        <div class="cell-input">
+          <span class="cell-type">interactive</span>
+          <div class="code"><span class="kw">from </span><span class="fn">neural_playground</span><span class="kw"> import </span><span class="tg">NeuronGame</span>
+<span class="fn">game</span><span class="tx"> = </span><span class="tg">NeuronGame</span><span class="tx">(</span><span class="at">mode</span><span class="op">=</span><span class="st">"educational"</span><span class="tx">,</span> <span class="at">beginner_friendly</span><span class="op">=</span><span class="kw">True</span><span class="tx">)</span>
+<span class="fn">game</span><span class="tx">.</span><span class="fn">run</span><span class="tx">()</span>  <span class="cm"># Click neurons to activate. Watch the magic!</span></div>
+        </div>
+        <div class="cell-output show" style="padding:0">
+          <div class="game-wrapper">
+            <div class="game-header">
+              <div>
+                <div class="game-title">🧠 Neural Network Playground</div>
+                <div class="game-subtitle">Click neurons · See how data flows through layers · Learn ML intuitively</div>
+              </div>
+            </div>
+            <div class="game-body">
+              <div class="game-sidebar">
+                <h4>Controls</h4>
+                <button class="game-btn active-btn" onclick="setMode('view')">👁 Observe mode</button>
+                <button class="game-btn" onclick="setMode('fire')">⚡ Fire a neuron</button>
+                <button class="game-btn" onclick="runForwardPass()">▶ Forward pass</button>
+                <button class="game-btn" onclick="runTraining()">🔄 Train (5 epochs)</button>
+                <button class="game-btn" onclick="resetNetwork()">↺ Reset</button>
+
+                <h4 style="margin-top:16px">Network</h4>
+                <div style="font-size:11px;color:var(--text-dim);line-height:1.8;">
+                  <div>Input layer: <span style="color:var(--accent)">3 neurons</span></div>
+                  <div>Hidden 1: <span style="color:var(--function)">4 neurons</span></div>
+                  <div>Hidden 2: <span style="color:var(--function)">4 neurons</span></div>
+                  <div>Output: <span style="color:var(--accent3)">2 neurons</span></div>
+                </div>
+
+                <div class="epoch-bar-wrap">
+                  <div class="epoch-label">Training progress</div>
+                  <div class="epoch-track"><div class="epoch-fill" id="epoch-fill"></div></div>
+                  <div class="loss-display" id="loss-display">Loss: —</div>
+                </div>
+
+                <div class="game-legend">
+                  <div class="legend-item"><div class="legend-dot" style="background:#00e5ff"></div>Input</div>
+                  <div class="legend-item"><div class="legend-dot" style="background:#d2a8ff"></div>Hidden</div>
+                  <div class="legend-item"><div class="legend-dot" style="background:#4ade80"></div>Output</div>
+                </div>
+              </div>
+              <div class="game-main">
+                <canvas id="nn-canvas"></canvas>
+                <div class="game-tooltip" id="game-tooltip">
+                  <strong>Welcome to the Neural Network Playground!</strong><br>
+                  Click <em>▶ Forward pass</em> to see data flow through the network, or click <em>⚡ Fire a neuron</em> then click any neuron. Each circle is a neuron — the connections are weights!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =============================== -->
+  <!--  CELL 7: Contact                -->
+  <!-- =============================== -->
+  <section id="contact">
+    <div class="cell" data-cell="7">
+      <div class="cell-prompt">
+        <div class="prompt-label in-label">In [<span class="prompt-count">7</span>]:</div>
+      </div>
+      <div class="cell-body">
+        <div class="cell-input">
+          <span class="cell-type">code</span>
+          <div class="code"><span class="fn">contact</span><span class="tx">.</span><span class="fn">send_message</span><span class="tx">(</span>
+    <span class="at">to</span><span class="op">=</span><span class="st">"hruthikcharank@gmail.com"</span><span class="tx">,</span>
+    <span class="at">subject</span><span class="op">=</span><span class="st">"Let's build something together!"</span>
+<span class="tx">)</span></div>
+        </div>
+        <div class="cell-output show">
+          <div class="contact-wrapper">
+            <div class="contact-info">
+              <div class="contact-cta">Let's build<br><span>something together!</span></div>
+              <p class="md-p">Whether it's a wild AI idea, a collab, an internship — I'm all ears. My DMs are as open as my Pull Requests.</p>
+              <div class="contact-links">
+                <a href="mailto:hruthikcharank@gmail.com" class="contact-link">
+                  <div class="contact-link-icon">✉️</div>
+                  <div>
+                    <div class="contact-link-label">Email</div>
+                    <div class="contact-link-val">hruthikcharank@gmail.com</div>
+                  </div>
+                </a>
+                <a href="https://www.linkedin.com/in/hruthik-charan-k-aa4ab7271/" target="_blank" class="contact-link">
+                  <div class="contact-link-icon">💼</div>
+                  <div>
+                    <div class="contact-link-label">LinkedIn</div>
+                    <div class="contact-link-val">hruthik-charan-k</div>
+                  </div>
+                </a>
+                <a href="https://github.com/Hruthikck28" target="_blank" class="contact-link">
+                  <div class="contact-link-icon">🐙</div>
+                  <div>
+                    <div class="contact-link-label">GitHub</div>
+                    <div class="contact-link-val">Hruthikck28</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+            <div class="contact-form">
+              <div class="form-field">
+                <label>Your Name</label>
+                <input type="text" id="cf-name" placeholder="Ada Lovelace" />
+              </div>
+              <div class="form-field">
+                <label>Email</label>
+                <input type="email" id="cf-email" placeholder="ada@example.com" />
+              </div>
+              <div class="form-field">
+                <label>Message</label>
+                <textarea id="cf-msg" placeholder="Hey Hruthik, I have a wild idea..."></textarea>
+              </div>
+              <button class="btn-send" onclick="sendMail()">▶ Execute send()</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <code>
+    print(<span>"Built with ❤️, Python vibes &amp; a lot of "</span> + <span style="color:var(--function)">"Real Madrid energy"</span>)<br>
+    <span>© 2025 K. Hruthik Charan · All rights reserved</span>
+  </code>
+</footer>
+
+<!-- Scroll to top -->
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ===== LOADER =====
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('loader').classList.add('hide');
+  }, 1800);
+});
+
+// ===== HAMBURGER NAV =====
+function toggleNav() {
+  document.getElementById('nav-links').classList.toggle('open');
+}
+
+// ===== PARTICLES =====
+(function() {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], mouse = {x:-999,y:-999};
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function Particle() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.r = Math.random() * 1.5 + 0.5;
+    this.vx = (Math.random() - 0.5) * 0.3;
+    this.vy = (Math.random() - 0.5) * 0.3;
+    this.alpha = Math.random() * 0.5 + 0.1;
+  }
+  Particle.prototype.update = function() {
+    this.x += this.vx; this.y += this.vy;
+    if (this.x < 0) this.x = W;
+    if (this.x > W) this.x = 0;
+    if (this.y < 0) this.y = H;
+    if (this.y > H) this.y = 0;
+  };
+
+  for (let i = 0; i < 80; i++) particles.push(new Particle());
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    // Draw connections
+    for (let i = 0; i < particles.length; i++) {
+      for (let j = i+1; j < particles.length; j++) {
+        const dx = particles[i].x - particles[j].x;
+        const dy = particles[i].y - particles[j].y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        if (dist < 120) {
+          ctx.beginPath();
+          ctx.strokeStyle = `rgba(0,229,255,${0.06 * (1 - dist/120)})`;
+          ctx.lineWidth = 0.5;
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.stroke();
+        }
+      }
+      particles[i].update();
+      ctx.beginPath();
+      ctx.arc(particles[i].x, particles[i].y, particles[i].r, 0, Math.PI*2);
+      ctx.fillStyle = `rgba(0,229,255,${particles[i].alpha})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ===== SCROLL EFFECTS =====
+const scrollTopBtn = document.getElementById('scroll-top');
+const navLinks = document.querySelectorAll('.tb-nav a');
+const sections = document.querySelectorAll('section[id]');
+
+window.addEventListener('scroll', () => {
+  scrollTopBtn.classList.toggle('show', window.scrollY > 400);
+
+  // Active nav link
+  let current = '';
+  sections.forEach(s => {
+    if (window.scrollY >= s.offsetTop - 100) current = s.id;
+  });
+  navLinks.forEach(a => {
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+  });
+});
+
+// ===== CELL CLICK TO ACTIVATE =====
+document.querySelectorAll('.cell').forEach(cell => {
+  cell.addEventListener('click', () => {
+    document.querySelectorAll('.cell').forEach(c => c.classList.remove('active'));
+    cell.classList.add('active');
+  });
+});
+
+// ===== INTERSECTION OBSERVER for cells =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('visible');
+  });
+}, { threshold: 0.1 });
+document.querySelectorAll('.cell').forEach(c => observer.observe(c));
+
+// ===== CONTACT FORM =====
+function sendMail() {
+  const name = document.getElementById('cf-name').value;
+  const email = document.getElementById('cf-email').value;
+  const msg = document.getElementById('cf-msg').value;
+  if (!name || !email || !msg) { alert('Please fill in all fields.'); return; }
+  const mailto = `mailto:hruthikcharank@gmail.com?subject=Portfolio Contact from ${encodeURIComponent(name)}&body=${encodeURIComponent(msg + '\n\nFrom: ' + name + ' <' + email + '>')}`;
+  window.location.href = mailto;
+}
+
+// ===========================
+// ===== NN GAME ENGINE =====
+// ===========================
+(function() {
+  const canvas = document.getElementById('nn-canvas');
+  const ctx = canvas.getContext('2d');
+  let currentMode = 'view';
+  let training = false;
+  let epoch = 0, maxEpoch = 5;
+  let globalLoss = 1.0;
+
+  // Network definition
+  const layers = [3, 4, 4, 2];
+  const layerColors = ['#00e5ff', '#d2a8ff', '#d2a8ff', '#4ade80'];
+  let neurons = []; // {x,y,layer,idx,activation,bias}
+  let weights = []; // {from,to,weight,signal}
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width;
+    canvas.height = 380;
+    buildNetwork();
+    draw();
+  }
+
+  function buildNetwork() {
+    neurons = []; weights = [];
+    const W = canvas.width, H = canvas.height;
+    const layerX = (i) => 60 + (i / (layers.length - 1)) * (W - 120);
+    const neuronY = (layer, idx) => {
+      const count = layers[layer];
+      const spacing = Math.min(60, (H - 80) / count);
+      return H/2 - ((count-1) * spacing / 2) + idx * spacing;
+    };
+
+    layers.forEach((count, l) => {
+      for (let n = 0; n < count; n++) {
+        neurons.push({
+          x: layerX(l), y: neuronY(l, n),
+          layer: l, idx: n,
+          activation: Math.random() * 0.3,
+          bias: (Math.random() - 0.5) * 0.5
+        });
+      }
+    });
+
+    // Create weights between adjacent layers
+    let nIdx = 0, prev = 0;
+    for (let l = 0; l < layers.length - 1; l++) {
+      const fromNeurons = neurons.filter(n => n.layer === l);
+      const toNeurons = neurons.filter(n => n.layer === l+1);
+      fromNeurons.forEach(fn => {
+        toNeurons.forEach(tn => {
+          weights.push({ from: fn, to: tn, weight: (Math.random()-0.5)*2, signal: 0 });
+        });
+      });
+    }
+  }
+
+  function sigmoid(x) { return 1 / (1 + Math.exp(-x)); }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw weights
+    weights.forEach(w => {
+      const alpha = Math.min(0.6, Math.abs(w.weight) * 0.3 + 0.05);
+      const sig = w.signal;
+      ctx.beginPath();
+      ctx.moveTo(w.from.x, w.from.y);
+      ctx.lineTo(w.to.x, w.to.y);
+
+      if (sig > 0.1) {
+        ctx.strokeStyle = `rgba(0,229,255,${sig * 0.8})`;
+        ctx.lineWidth = 1 + sig * 2;
+      } else {
+        ctx.strokeStyle = w.weight > 0
+          ? `rgba(0,229,255,${alpha})`
+          : `rgba(255,107,107,${alpha})`;
+        ctx.lineWidth = 0.5 + Math.abs(w.weight) * 0.5;
+      }
+      ctx.stroke();
+    });
+
+    // Draw neurons
+    neurons.forEach(n => {
+      const r = 16;
+      const col = layerColors[n.layer];
+      const act = n.activation;
+
+      // Glow
+      if (act > 0.4) {
+        const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, r * 2.5);
+        grad.addColorStop(0, col.replace(')', `,${act * 0.5})`).replace('rgb', 'rgba'));
+        grad.addColorStop(1, 'transparent');
+        ctx.fillStyle = grad;
+        ctx.beginPath(); ctx.arc(n.x, n.y, r * 2.5, 0, Math.PI*2); ctx.fill();
+      }
+
+      // Neuron body
+      const grad2 = ctx.createRadialGradient(n.x-3, n.y-3, 0, n.x, n.y, r);
+      grad2.addColorStop(0, col);
+      const dimCol = col + '44';
+      grad2.addColorStop(1, col + '22');
+      ctx.beginPath(); ctx.arc(n.x, n.y, r, 0, Math.PI*2);
+      ctx.fillStyle = `${col}${Math.round(act * 200 + 55).toString(16).padStart(2,'0')}`;
+      ctx.fill();
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Activation value
+      ctx.fillStyle = act > 0.5 ? '#0d1117' : '#fff';
+      ctx.font = 'bold 9px JetBrains Mono, monospace';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(act.toFixed(2), n.x, n.y);
+    });
+
+    // Layer labels
+    const labels = ['Input', 'Hidden₁', 'Hidden₂', 'Output'];
+    layers.forEach((_, l) => {
+      const x = neurons.find(n => n.layer === l)?.x;
+      if (!x) return;
+      ctx.fillStyle = layerColors[l] + 'aa';
+      ctx.font = '10px JetBrains Mono, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText(labels[l], x, 18);
+    });
+  }
+
+  // Click detection
+  canvas.addEventListener('click', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    let hit = null;
+    neurons.forEach(n => {
+      const d = Math.sqrt((n.x-mx)**2 + (n.y-my)**2);
+      if (d < 20) hit = n;
+    });
+
+    if (hit) {
+      if (currentMode === 'fire') {
+        hit.activation = 1.0;
+        setTooltip(`<strong>Neuron fired!</strong> Layer: ${['Input','Hidden₁','Hidden₂','Output'][hit.layer]}, Idx: ${hit.idx}<br>Activation set to 1.0. Notice connected neurons are influenced by weights!`);
+        propagateFrom(hit);
+      } else {
+        setTooltip(`<strong>Neuron info</strong> — Layer: ${['Input','Hidden₁','Hidden₂','Output'][hit.layer]}, Index: ${hit.idx}<br>Activation: <strong>${hit.activation.toFixed(4)}</strong> | Bias: ${hit.bias.toFixed(3)}<br>Each neuron receives inputs, multiplies by weights, adds bias, then applies sigmoid activation.`);
+      }
+      draw();
+    }
+  });
+
+  canvas.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    let hit = neurons.find(n => Math.sqrt((n.x-mx)**2+(n.y-my)**2) < 20);
+    canvas.style.cursor = hit ? 'pointer' : 'default';
+  });
+
+  function propagateFrom(source) {
+    // Animate signal forward from source neuron
+    weights.forEach(w => { w.signal = 0; });
+    let delay = 0;
+    function propagateLayer(l) {
+      if (l >= layers.length - 1) return;
+      const fromNeurons = neurons.filter(n => n.layer === l && (source ? n === source || l > source.layer : true));
+      const layerWeights = weights.filter(w => w.from.layer === l);
+      layerWeights.forEach(w => {
+        if (source && w.from.layer < source.layer) return;
+        w.signal = Math.abs(w.weight) * w.from.activation;
+      });
+      // Compute next layer
+      neurons.filter(n => n.layer === l+1).forEach(n => {
+        const incoming = weights.filter(w => w.to === n);
+        const sum = incoming.reduce((acc, w) => acc + w.weight * w.from.activation, n.bias);
+        n.activation = sigmoid(sum);
+      });
+      draw();
+      setTimeout(() => {
+        layerWeights.forEach(w => w.signal = 0);
+        propagateLayer(l+1);
+      }, 400);
+    }
+    propagateLayer(source ? source.layer : 0);
+  }
+
+  window.setMode = function(m) {
+    currentMode = m;
+    document.querySelectorAll('.game-btn').forEach(b => b.classList.remove('active-btn'));
+    event.target.classList.add('active-btn');
+    const tips = {
+      view: 'Click any neuron to see its details.',
+      fire: 'Click a neuron to manually fire it and watch activations propagate!'
+    };
+    if (tips[m]) setTooltip(`<strong>Mode: ${m}</strong> — ${tips[m]}`);
+  };
+
+  window.runForwardPass = function() {
+    // Randomize input activations, propagate
+    neurons.filter(n => n.layer === 0).forEach(n => n.activation = Math.random());
+    setTooltip('<strong>Forward Pass!</strong> Random inputs are propagating through the network. Each neuron computes: <em>σ(Σ w·x + b)</em> where σ is sigmoid.');
+    propagateFrom(null);
+  };
+
+  window.runTraining = async function() {
+    if (training) return;
+    training = true;
+    epoch = 0; globalLoss = 1.0;
+    setTooltip('<strong>Training started!</strong> Gradient descent is adjusting weights to minimize the loss function. Watch the loss decrease!');
+
+    for (let e = 0; e < maxEpoch; e++) {
+      epoch = e + 1;
+      await new Promise(r => setTimeout(r, 600));
+
+      // Simulate training: slightly adjust weights & reduce loss
+      weights.forEach(w => { w.weight += (Math.random()-0.5) * 0.1; });
+      globalLoss *= (0.6 + Math.random() * 0.2);
+      document.getElementById('epoch-fill').style.width = (epoch/maxEpoch*100) + '%';
+      document.getElementById('loss-display').textContent = `Loss: ${globalLoss.toFixed(4)}`;
+
+      neurons.filter(n => n.layer === 0).forEach(n => n.activation = Math.random());
+      propagateFrom(null);
+      await new Promise(r => setTimeout(r, 300));
+    }
+    setTooltip(`<strong>Training complete!</strong> Ran ${maxEpoch} epochs. Final loss: ${globalLoss.toFixed(4)}. Weights have been optimized to better fit the training data!`);
+    training = false;
+  };
+
+  window.resetNetwork = function() {
+    epoch = 0; globalLoss = 1.0;
+    document.getElementById('epoch-fill').style.width = '0%';
+    document.getElementById('loss-display').textContent = 'Loss: —';
+    buildNetwork();
+    draw();
+    setTooltip('<strong>Network reset!</strong> Weights randomized. Try Forward pass → Train → observe how loss drops!');
+  };
+
+  function setTooltip(html) {
+    document.getElementById('game-tooltip').innerHTML = html;
+  }
+
+  // Init
+  resize();
+  window.addEventListener('resize', resize);
+  draw();
+})();
+</script>
+</body>
+</html>
