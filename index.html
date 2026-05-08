@@ -835,6 +835,32 @@
         </div>
         <div class="cell-output show">
           <div class="projects-grid">
+            <!-- Project main -->
+            <div class="project-card">
+              <div class="project-thumb">
+                <div class="project-thumb-icon">⚕️</div>
+              </div>
+              <div class="project-content">
+                <div class="project-name">Medical-Phi-3-Assistant: End-to-End LLM Fine-Tuning & RLHF Pipeline</div>
+                <div class="project-desc">
+                  Built an end-to-end LLM alignment pipeline on a free T4 GPU — fine-tuned Microsoft Phi-3-mini (3.8B) on a medical Q&A dataset using QLoRA (4-bit quantization), followed by Direct Preference Optimization (DPO) for safety alignment; model score improved from 4.2 → 8.2 / 10 on a GPT-4 judged eval suite of 20 domain-specific prompts
+Designed and executed a GPT-4-as-judge evaluation framework scoring model responses on Factuality, Medical Tone, and Safety across 20 hand-crafted clinical prompts; benchmarked 3 model checkpoints (Base → SFT → DPO) to quantify the impact of each training stage
+Implemented a two-stage RLHF pipeline — SFT on 3,000 medical flashcard samples improved Medical Tone from Generic to Clinical/Professional; DPO alignment on 1,000 preference pairs elevated Safety Warnings from Poor to Excellent, demonstrating measurable behavioral alignment
+                </div>
+                <div class="project-tech">
+                  <span class="tech-tag">Python</span>
+                  <span class="tech-tag">PyTorch</span>
+                  <span class="tech-tag">HuggingFace Transformers</span>
+                  <span class="tech-tag">PEFT / LoRA</span>
+                  <span class="tech-tag">RL (SFTTrainer, DPOTrainer)</span>
+                  <span class="tech-tag">BitsAndBytes (QLoRA 4-bit)</span>
+                  <span class="tech-tag">Weights & Biases</span>
+                </div>
+                <div class="project-links">
+                  <a href="https://github.com/Hruthikck28/Medical-Phi-3-Assistant" target="_blank" class="project-link">⌥ GitHub</a>
+                </div>
+              </div>
+            </div>
 
             <!-- Project 1 -->
             <div class="project-card">
