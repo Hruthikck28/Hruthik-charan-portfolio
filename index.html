@@ -690,7 +690,7 @@
             </div>
             <div class="hero-title">&gt;_ ML/AI Enthusiast &amp; Data Scientist</div>
             <div class="hero-bio">
-              Computer Science &amp; Business Systems student specializing in AI/ML, NLP, and RAG architectures. Passionate about building efficient systems and writing clean, maintainable code.
+              Computer Science &amp; Business Systems student who builds production AI systems without paid infrastructure — fine-tuned and aligned a medical LLM using QLoRA + DPO on Google Colab's free tier, orchestrated multi-agent research pipelines with LangGraph and Groq, and engineered a RAG system with 96% faithfulness score. Passionate about LLM alignment, agentic AI, and making frontier AI techniques accessible.
             </div>
             <div class="hero-btns">
               <a href="#projects" class="btn btn-primary">
@@ -731,7 +731,7 @@
           <div class="prompt-label out-label" style="margin-bottom:12px">Out [<span>2</span>]:</div>
           <div class="about-output">
             <p>I mostly write <span class="highlight">clean, maintainable code</span> so I have more free time to watch Real Madrid collect trophies, consume literally any sport broadcasted, or actually go outside and play them.</p>
-            <p>I'm an <span class="highlight2">AI/ML enthusiast</span> and Computer Science student from Vijayawada who firmly believes that reading endless documentation is a trap — if we aren't learning by actually building a project, count me out.</p>
+            <p>I'm an <span class="highlight2">AI/ML enthusiast</span> and Computer Science student who firmly believes that reading endless documentation is a trap — if we aren't learning by actually building a project, count me out.</p>
             <p>My brain is essentially a <span class="highlight">24/7 whiteboard</span>; I'm constantly hunting for wild new ideas to build into reality. Ultimately, I build cool things and I can absolutely bring that same chaotic efficiency to your team.</p>
             <div class="about-fun-facts">
               <div class="fun-tag">⚽ Real Madrid fanatic</div>
@@ -778,12 +778,19 @@
               <div class="skill-group-title">// Frameworks &amp; Libraries</div>
               <div class="skill-tags">
                 <span class="skill-tag">Pandas</span>
-                <span class="skill-tag">Keras</span>
+                <span class="skill-tag">NumPy</span>
+                <span class="skill-tag">Scikit-learn</span>
+                <span class="skill-tag">PyTorch</span>
+                <span class="skill-tag">HuggingFace Transformers</span>
+                <span class="skill-tag">FastAPI</span>
                 <span class="skill-tag">TensorFlow</span>
+                <span class="skill-tag">Kubernetes</span>
                 <span class="skill-tag">LangChain</span>
                 <span class="skill-tag">LangGraph</span>
-                <span class="skill-tag">NLTK</span>
-                <span class="skill-tag">FastAPI</span>
+                <span class="skill-tag">PEFT</span>
+                <span class="skill-tag">ChromaDB</span>
+                <span class="skill-tag">Sentence Transformers</span>
+                <span class="skill-tag">TRL (SFTTrainer / DPOTrainer)</span>
               </div>
             </div>
             <div class="skill-group">
@@ -791,6 +798,8 @@
               <div class="skill-tags">
                 <span class="skill-tag">Git</span>
                 <span class="skill-tag">Docker</span>
+                <span class="skill-tag">Weights & Biases</span>
+                <span class="skill-tag">HuggingFace spaces,</span>
                 <span class="skill-tag">PostgreSQL</span>
                 <span class="skill-tag">pgvector</span>
                 <span class="skill-tag">Power BI</span>
@@ -826,7 +835,7 @@
         <div class="cell-input">
           <span class="cell-type">code</span>
           <div class="code"><span class="fn">projects</span><span class="tx"> = [</span>
-    <span class="st">"Stock Movement Sentiment Analysis Pipeline"</span><span class="tx">,</span>
+    <span class="st">"Medical-Phi-3-Assistant: End-to-End LLM Fine-Tuning & RLHF Pipeline"</span><span class="tx">,</span>
     <span class="st">"Patent-Scout: Hybrid RAG Innovation Accelerator"</span><span class="tx">,</span>
     <span class="st">"InteriorGen — AI Room Designer"</span><span class="tx">,</span>
     <span class="st">"... more loading"</span>
@@ -835,6 +844,37 @@
         </div>
         <div class="cell-output show">
           <div class="projects-grid">
+            <!-- Project new -->
+            <div class="project-card">
+              <div class="project-thumb">
+                <div class="project-thumb-icon">🌐</div>
+              </div>
+              <div class="project-content">
+                <div class="project-name">AI Business Intelligence — Autonomous Multi-Agent Research System</div>
+                <div class="project-desc">
+                  Orchestrated 3-agent LangGraph pipeline (Planner→Researcher→Writer) for autonomous business research; LLM-judge eval scored reports 8/10 Accuracy, 9/10 Completeness. Built ChromaDB + SentenceTransformers semantic memory layer — near-instant cache hits
+  vs ~36s cold runs; reduced redundant Tavily API calls significantly. Diagnosed & fixed Llama-3.1 XML function tag hallucination via negative-constraint
+  prompting; implemented Groq rate-limit throttling for stable multi-agent execution
+                </div>
+                <div class="project-tech">
+                  <span class="tech-tag">Python</span>
+                  <span class="tech-tag">LangGraph</span>
+                  <span class="tech-tag">LangChain</span>
+                  <span class="tech-tag">Groq API (Llama 3.1 8B)</span>
+                  <span class="tech-tag">ChromaDB</span>
+                  <span class="tech-tag">SentenceTransformers</span>
+                  <span class="tech-tag">Tavily Search API</span>
+                  <span class="tech-tag">ArXiv API</span>
+                  <span class="tech-tag">Gradio</span>
+                  <span class="tech-tag">HuggingFace Spaces</span>
+                  <span class="tech-tag">Subprocess Sandbox</span>
+                  <span class="tech-tag">python-dotenv</span>
+                </div>
+                <div class="project-links">
+                  <a href="https://github.com/Hruthikck28/Medical-Phi-3-Assistant" target="_blank" class="project-link">⌥ GitHub</a>
+                </div>
+              </div>
+            </div>
             <!-- Project main -->
             <div class="project-card">
               <div class="project-thumb">
